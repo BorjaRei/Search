@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 
 import util
 from util import Stack
+from game import Directions
 
 class SearchProblem:
     """
@@ -91,22 +92,43 @@ def depthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
 
-    print("Start:", problem.getStartState())
 
     firstState= problem.getStartState()
-    evaluated= {firstState}
+    explored= {firstState}
     toEvaluate= Stack()
-    toEvaluate.push(toEvaluate,firstState)
+    toEvaluate.push(firstState)
     found=problem.isGoalState(firstState)
-
-    print("jdkas")
-    while toEvaluate.isEmpty==False:
+    movements={}
+    direcctions={"West": Directions.WEST,"South":Directions.SOUTH, "East":Directions.EAST,"North":Directions.NORTH}
+    while toEvaluate.isEmpty()==False and found==False:
         node=toEvaluate.pop()
+        explored.add(node)
         sucessors = problem.getSuccessors(node)
         for i in sucessors:
-            print(i)
+            print(i[0])
+            n=i[0]
 
-    util.raiseNotDefined()
+            if problem.isGoalState(n):
+                print("SOL")
+                found=True
+                goal=n
+            if n not in explored :
+                movements[n] = [i[1], node]
+                toEvaluate.push(n)
+
+    print(goal)
+
+    sol=[]
+    next=goal
+    while next != firstState:
+        m=movements.get(next)
+        print(m)
+        sol.append(direcctions.get(m[0]))
+        next=m[1]
+
+
+    sol.reverse()
+    return(sol)
 
 
 def breadthFirstSearch(problem):
