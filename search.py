@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -19,12 +19,13 @@ Pacman agents (in searchAgents.py).
 
 import util
 from util import Stack
+from util import Queue
+from game import Directions
 
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
     any of the methods (in object-oriented terminology: an abstract class).
-
     You do not need to change anything in this class, ever.
     """
 
@@ -37,7 +38,6 @@ class SearchProblem:
     def isGoalState(self, state):
         """
           state: Search state
-
         Returns True if and only if the state is a valid goal state.
         """
         util.raiseNotDefined()
@@ -45,7 +45,6 @@ class SearchProblem:
     def getSuccessors(self, state):
         """
           state: Search state
-
         For a given state, this should return a list of triples, (successor,
         action, stepCost), where 'successor' is a successor to the current
         state, 'action' is the action required to get there, and 'stepCost' is
@@ -56,7 +55,6 @@ class SearchProblem:
     def getCostOfActions(self, actions):
         """
          actions: A list of actions to take
-
         This method returns the total cost of a particular sequence of actions.
         The sequence must be composed of legal moves.
         """
@@ -76,24 +74,62 @@ def tinyMazeSearch(problem):
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
-
     Your search algorithm needs to return a list of actions that reaches the
     goal. Make sure to implement a graph search algorithm.
-
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     [((5, 4), 'South', 1), ((4, 5), 'West', 1)]
     """
     "*** YOUR CODE HERE ***"
 
+
+    firstState= problem.getStartState()
+    explored= {firstState}
+    toEvaluate= Stack()
+    toEvaluate.push(firstState)
+    found=problem.isGoalState(firstState)
+    movements={}
+    direcctions={"West": Directions.WEST,"South":Directions.SOUTH, "East":Directions.EAST,"North":Directions.NORTH}
+    while toEvaluate.isEmpty()==False and found==False:
+        node=toEvaluate.pop()
+        explored.add(node)
+        sucessors = problem.getSuccessors(node)
+        for i in sucessors:
+            print(i[0])
+            n=i[0]
+
+            if problem.isGoalState(n):
+                print("SOL")
+                found=True
+                goal=n
+            if n not in explored :
+                movements[n] = [i[1], node]
+                toEvaluate.push(n)
+
+    print(goal)
+
+    sol=[]
+    next=goal
+    while next != firstState:
+        m=movements.get(next)
+        print(m)
+        sol.append(direcctions.get(m[0]))
+        next=m[1]
+
+
+    sol.reverse()
+    return(sol)
+
+
+def breadthFirstSearch(problem):
+    """Search the shallowest nodes in the search tree first."""
+    "*** YOUR CODE HERE ***"
     firstState = problem.getStartState()
     explored = {firstState}
-    toEvaluate = Stack()
+    toEvaluate = Queue()
     toEvaluate.push(firstState)
     found = problem.isGoalState(firstState)
     movements = {}
@@ -127,12 +163,6 @@ def depthFirstSearch(problem):
 
     sol.reverse()
     return (sol)
-
-
-def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
