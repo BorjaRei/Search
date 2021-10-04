@@ -20,6 +20,7 @@ Pacman agents (in searchAgents.py).
 import util
 from util import Stack
 from util import Queue
+from util import PriorityQueue
 from game import Directions
 
 class SearchProblem:
@@ -167,7 +168,42 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    firstState = problem.getStartState()
+    explored = {firstState}
+    toEvaluate = PriorityQueue()
+    toEvaluate.push(firstState,1)
+    found = problem.isGoalState(firstState)
+    movements = {}
+    direcctions = {"West": Directions.WEST, "South": Directions.SOUTH, "East": Directions.EAST,
+                   "North": Directions.NORTH}
+    while toEvaluate.isEmpty() == False and found == False:
+        node = toEvaluate.pop()
+        explored.add(node)
+        sucessors = problem.getSuccessors(node)
+        for i in sucessors:
+            print(i[0])
+            n = i[0]
+
+            if problem.isGoalState(n):
+                print("SOL")
+                found = True
+                goal = n
+            if n not in explored:
+                movements[n] = [i[1], node]
+                toEvaluate.push(n,i[2])
+
+    print(goal)
+
+    sol = []
+    next = goal
+    while next != firstState:
+        m = movements.get(next)
+        print(m)
+        sol.append(direcctions.get(m[0]))
+        next = m[1]
+
+    sol.reverse()
+    return (sol)
 
 def nullHeuristic(state, problem=None):
     """
