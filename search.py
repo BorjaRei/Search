@@ -112,8 +112,7 @@ def depthFirstSearch(problem):
     next=goal
     while next != firstState:
         m=movements.get(next)
-        print(m)
-        sol.append(direcctions.get(m[0]))
+        sol.append(m[0])
         next=m[1]
 
 
