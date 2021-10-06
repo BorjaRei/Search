@@ -139,7 +139,7 @@ def breadthFirstSearch(problem):
             sucessors = problem.getSuccessors(node)
             for i in sucessors:
                 n = i[0]
-                if n not in explored:
+                if n not in explored and n not in movements.keys():
                     movements[n] = [i[1], node]
                     if n not in toEvaluate.list:
                         toEvaluate.push(n)
