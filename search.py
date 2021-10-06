@@ -98,7 +98,7 @@ def depthFirstSearch(problem):
         explored.add(node)
         if problem.isGoalState(node):
             found = True
-            goal = n
+            goal = node
         if not found:
             sucessors = problem.getSuccessors(node)
             for i in sucessors:
