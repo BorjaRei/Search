@@ -96,16 +96,17 @@ def depthFirstSearch(problem):
     while toEvaluate.isEmpty()==False and found==False:
         node=toEvaluate.pop()
         explored.add(node)
-        sucessors = problem.getSuccessors(node)
-        for i in sucessors:
-            n=i[0]
+        if problem.isGoalState(node):
+            found = True
+            goal = n
+        if not found:
+            sucessors = problem.getSuccessors(node)
+            for i in sucessors:
+                n=i[0]
+                if n not in explored :
+                    movements[n] = [i[1], node]
+                    toEvaluate.push(n)
 
-            if problem.isGoalState(n):
-                found=True
-                goal=n
-            if n not in explored :
-                movements[n] = [i[1], node]
-                toEvaluate.push(n)
 
     sol=[]
     next=goal
