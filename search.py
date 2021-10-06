@@ -129,8 +129,6 @@ def breadthFirstSearch(problem):
     toEvaluate.push(firstState)
     found = problem.isGoalState(firstState)
     movements = {}
-    direcctions = {"West": Directions.WEST, "South": Directions.SOUTH, "East": Directions.EAST,
-                   "North": Directions.NORTH}
     while toEvaluate.isEmpty() == False and found == False:
         node = toEvaluate.pop()
         explored.add(node)
@@ -149,7 +147,7 @@ def breadthFirstSearch(problem):
     next = goal
     while next != firstState:
         m = movements.get(next)
-        sol.append(direcctions.get(m[0]))
+        sol.append(m[0])
         next = m[1]
 
     sol.reverse()
