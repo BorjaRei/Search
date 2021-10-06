@@ -93,31 +93,26 @@ def depthFirstSearch(problem):
     toEvaluate.push(firstState)
     found=problem.isGoalState(firstState)
     movements={}
-    direcctions={"West": Directions.WEST,"South":Directions.SOUTH, "East":Directions.EAST,"North":Directions.NORTH}
     while toEvaluate.isEmpty()==False and found==False:
         node=toEvaluate.pop()
         explored.add(node)
-        sucessors = problem.getSuccessors(node)
-        for i in sucessors:
-            print(i[0])
-            n=i[0]
+        if problem.isGoalState(node):
+            found = True
+            goal = node
+        if not found:
+            sucessors = problem.getSuccessors(node)
+            for i in sucessors:
+                n=i[0]
+                if n not in explored :
+                    movements[n] = [i[1], node]
+                    toEvaluate.push(n)
 
-            if problem.isGoalState(n):
-                print("SOL")
-                found=True
-                goal=n
-            if n not in explored :
-                movements[n] = [i[1], node]
-                toEvaluate.push(n)
-
-    print(goal)
 
     sol=[]
     next=goal
     while next != firstState:
         m=movements.get(next)
-        print(m)
-        sol.append(direcctions.get(m[0]))
+        sol.append(m[0])
         next=m[1]
 
 
@@ -141,24 +136,19 @@ def breadthFirstSearch(problem):
         explored.add(node)
         sucessors = problem.getSuccessors(node)
         for i in sucessors:
-            print(i[0])
             n = i[0]
 
             if problem.isGoalState(n):
-                print("SOL")
                 found = True
                 goal = n
             if n not in explored:
                 movements[n] = [i[1], node]
                 toEvaluate.push(n)
 
-    print(goal)
-
     sol = []
     next = goal
     while next != firstState:
         m = movements.get(next)
-        print(m)
         sol.append(direcctions.get(m[0]))
         next = m[1]
 
@@ -181,24 +171,19 @@ def uniformCostSearch(problem):
         explored.add(node)
         sucessors = problem.getSuccessors(node)
         for i in sucessors:
-            print(i[0])
             n = i[0]
 
             if problem.isGoalState(n):
-                print("SOL")
                 found = True
                 goal = n
             if n not in explored:
                 movements[n] = [i[1], node]
                 toEvaluate.push(n,i[2])
 
-    print(goal)
-
     sol = []
     next = goal
     while next != firstState:
         m = movements.get(next)
-        print(m)
         sol.append(direcctions.get(m[0]))
         next = m[1]
 
