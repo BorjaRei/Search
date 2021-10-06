@@ -93,7 +93,6 @@ def depthFirstSearch(problem):
     toEvaluate.push(firstState)
     found=problem.isGoalState(firstState)
     movements={}
-    direcctions={"West": Directions.WEST,"South":Directions.SOUTH, "East":Directions.EAST,"North":Directions.NORTH}
     while toEvaluate.isEmpty()==False and found==False:
         node=toEvaluate.pop()
         explored.add(node)
