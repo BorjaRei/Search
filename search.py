@@ -203,8 +203,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     toEvaluate.push(firstState, 1)
     found = problem.isGoalState(firstState)
     movements = {}
-    direcctions = {"West": Directions.WEST, "South": Directions.SOUTH, "East": Directions.EAST,
-                   "North": Directions.NORTH}
     print("El primer estado es: ", end="")
     print(firstState)
     print("Los sucesores del primer estado son: ", end="")
@@ -229,7 +227,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     while next != firstState:
         m = movements.get(next)
 
-        sol.append(direcctions.get(m[0]))
+        sol.append(m[0])
         next = m[1]
 
     sol.reverse()
