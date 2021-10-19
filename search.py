@@ -174,8 +174,10 @@ def uniformCostSearch(problem):
             for i in sucessors:
                 n = i[0]
                 if n not in explored and n not in movements:
-                    movements[n] = [i[1], node]
+                    movements[n] = [i[1], node, i[2]]
                     toEvaluate.push(n,i[2])
+                elif n not in explored and n in movements and i[2]<=movements[n][2]:
+                    movements[n] = [i[1], node, i[2]]
 
     sol = []
     next = goal
