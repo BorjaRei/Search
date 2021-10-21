@@ -163,7 +163,10 @@ def uniformCostSearch(problem):
     toEvaluate.push(firstState,1)
     found = problem.isGoalState(firstState)
     movements = {}
+    coste=0
     while toEvaluate.isEmpty() == False and found == False:
+        if problem.getStartState()!=toEvaluate.heap[0][2]:
+            coste=toEvaluate.heap[0][0]
         node = toEvaluate.pop()
         explored.add(node)
         if problem.isGoalState(node):
@@ -175,7 +178,7 @@ def uniformCostSearch(problem):
                 n = i[0]
                 if n not in explored and n not in movements:
                     movements[n] = [i[1], node, i[2]]
-                    toEvaluate.push(n,i[2])
+                    toEvaluate.push(n,coste+i[2])
                 elif n not in explored and n in movements and i[2]<=movements[n][2]:
                     movements[n] = [i[1], node, i[2]]
 
