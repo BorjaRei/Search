@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -20,13 +20,13 @@ Pacman agents (in searchAgents.py).
 import util
 from util import Stack
 from util import Queue
+from util import PriorityQueue
 from game import Directions
 
 class SearchProblem:
     """
     This class outlines the structure of a search problem, but doesn't implement
     any of the methods (in object-oriented terminology: an abstract class).
-
     You do not need to change anything in this class, ever.
     """
 
@@ -39,7 +39,6 @@ class SearchProblem:
     def isGoalState(self, state):
         """
           state: Search state
-
         Returns True if and only if the state is a valid goal state.
         """
         util.raiseNotDefined()
@@ -47,7 +46,6 @@ class SearchProblem:
     def getSuccessors(self, state):
         """
           state: Search state
-
         For a given state, this should return a list of triples, (successor,
         action, stepCost), where 'successor' is a successor to the current
         state, 'action' is the action required to get there, and 'stepCost' is
@@ -58,7 +56,6 @@ class SearchProblem:
     def getCostOfActions(self, actions):
         """
          actions: A list of actions to take
-
         This method returns the total cost of a particular sequence of actions.
         The sequence must be composed of legal moves.
         """
@@ -78,16 +75,12 @@ def tinyMazeSearch(problem):
 def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
-
     Your search algorithm needs to return a list of actions that reaches the
     goal. Make sure to implement a graph search algorithm.
-
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
-
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     [((5, 4), 'South', 1), ((4, 5), 'West', 1)]
     """
@@ -100,31 +93,26 @@ def depthFirstSearch(problem):
     toEvaluate.push(firstState)
     found=problem.isGoalState(firstState)
     movements={}
-    direcctions={"West": Directions.WEST,"South":Directions.SOUTH, "East":Directions.EAST,"North":Directions.NORTH}
     while toEvaluate.isEmpty()==False and found==False:
         node=toEvaluate.pop()
         explored.add(node)
-        sucessors = problem.getSuccessors(node)
-        for i in sucessors:
-            print(i[0])
-            n=i[0]
+        if problem.isGoalState(node):
+            found = True
+            goal = node
+        if not found:
+            sucessors = problem.getSuccessors(node)
+            for i in sucessors:
+                n=i[0]
+                if n not in explored :
+                    movements[n] = [i[1], node]
+                    toEvaluate.push(n)
 
-            if problem.isGoalState(n):
-                print("SOL")
-                found=True
-                goal=n
-            if n not in explored :
-                movements[n] = [i[1], node]
-                toEvaluate.push(n)
-
-    print(goal)
 
     sol=[]
     next=goal
     while next != firstState:
         m=movements.get(next)
-        print(m)
-        sol.append(direcctions.get(m[0]))
+        sol.append(m[0])
         next=m[1]
 
 
@@ -141,32 +129,26 @@ def breadthFirstSearch(problem):
     toEvaluate.push(firstState)
     found = problem.isGoalState(firstState)
     movements = {}
-    direcctions = {"West": Directions.WEST, "South": Directions.SOUTH, "East": Directions.EAST,
-                   "North": Directions.NORTH}
     while toEvaluate.isEmpty() == False and found == False:
         node = toEvaluate.pop()
         explored.add(node)
-        sucessors = problem.getSuccessors(node)
-        for i in sucessors:
-            print(i[0])
-            n = i[0]
-
-            if problem.isGoalState(n):
-                print("SOL")
-                found = True
-                goal = n
-            if n not in explored:
-                movements[n] = [i[1], node]
-                toEvaluate.push(n)
-
-    print(goal)
+        if problem.isGoalState(node):
+            found = True
+            goal = node
+        if not found:
+            sucessors = problem.getSuccessors(node)
+            for i in sucessors:
+                n = i[0]
+                if n not in explored and n not in movements.keys():
+                    movements[n] = [i[1], node]
+                    if n not in toEvaluate.list:
+                        toEvaluate.push(n)
 
     sol = []
     next = goal
     while next != firstState:
         m = movements.get(next)
-        print(m)
-        sol.append(direcctions.get(m[0]))
+        sol.append(m[0])
         next = m[1]
 
     sol.reverse()
@@ -175,7 +157,40 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    firstState = problem.getStartState()
+    explored = {firstState}
+    toEvaluate = PriorityQueue()
+    toEvaluate.push(firstState,1)
+    found = problem.isGoalState(firstState)
+    movements = {}
+    coste=0
+    while toEvaluate.isEmpty() == False and found == False:
+        if problem.getStartState()!=toEvaluate.heap[0][2]:
+            coste=toEvaluate.heap[0][0]
+        node = toEvaluate.pop()
+        explored.add(node)
+        if problem.isGoalState(node):
+            found = True
+            goal = node
+        if not found:
+            sucessors = problem.getSuccessors(node)
+            for i in sucessors:
+                n = i[0]
+                if n not in explored and n not in movements:
+                    movements[n] = [i[1], node, i[2]]
+                    toEvaluate.push(n,coste+i[2])
+                elif n not in explored and n in movements and i[2]<=movements[n][2]:
+                    movements[n] = [i[1], node, i[2]]
+
+    sol = []
+    next = goal
+    while next != firstState:
+        m = movements.get(next)
+        sol.append(m[0])
+        next = m[1]
+
+    sol.reverse()
+    return (sol)
 
 def nullHeuristic(state, problem=None):
     """
@@ -187,7 +202,38 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    firstState = problem.getStartState()
+
+    explored = set()
+    toEvaluate = PriorityQueue()
+    toEvaluate.push(firstState, 0)
+    found = problem.isGoalState(firstState)
+    movements = PriorityQueue()
+    coste = 0
+    camino=[]
+
+    while toEvaluate.isEmpty() == False and found == False:
+        if problem.getStartState() != toEvaluate.heap[0][2]:
+            # Coste acumulado del nodo actual, pero sin el valor del heuristco
+            # ya que hay que recalcularlo para los nuevos nodos
+            coste = toEvaluate.heap[0][0]-heuristic(toEvaluate.heap[0][2],problem)
+            camino=movements.pop()
+
+        node = toEvaluate.pop()
+        if node not in explored:
+            explored.add(node)
+            if problem.isGoalState(node):
+                found = True
+            if not found:
+                sucessors = problem.getSuccessors(node)
+                for i in sucessors:
+                    n = i[0]
+                    if n not in explored:
+                        toEvaluate.push(n, coste + i[2]+heuristic(n,problem))
+                        movements.push(camino+[i[1]],coste + i[2]+ heuristic(n,problem))
+
+    print(camino)
+    return (camino)
 
 
 # Abbreviations
