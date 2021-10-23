@@ -85,39 +85,30 @@ def depthFirstSearch(problem):
     [((5, 4), 'South', 1), ((4, 5), 'West', 1)]
     """
     "*** YOUR CODE HERE ***"
-
-
-    firstState= problem.getStartState()
-    explored= {firstState}
-    toEvaluate= Stack()
+    firstState = problem.getStartState()
+    explored = []
+    toEvaluate = Stack()
     toEvaluate.push(firstState)
-    found=problem.isGoalState(firstState)
-    movements={}
-    while toEvaluate.isEmpty()==False and found==False:
-        node=toEvaluate.pop()
-        explored.add(node)
-        if problem.isGoalState(node):
-            found = True
-            goal = node
-        if not found:
-            sucessors = problem.getSuccessors(node)
-            for i in sucessors:
-                n=i[0]
-                if n not in explored :
-                    movements[n] = [i[1], node]
+    found = problem.isGoalState(firstState)
+    movements = Stack()
+    camino = []
+
+    while toEvaluate.isEmpty() == False and found == False:
+        node = toEvaluate.pop()
+        if node not in explored:
+            explored.append(node)
+            if problem.isGoalState(node):
+                found = True
+            if not found:
+                sucessors = problem.getSuccessors(node)
+                for i in sucessors:
+                    n = i[0]
+
                     toEvaluate.push(n)
+                    movements.push(camino + [i[1]])
+        if found == False: camino = movements.pop()
 
-
-    sol=[]
-    next=goal
-    while next != firstState:
-        m=movements.get(next)
-        sol.append(m[0])
-        next=m[1]
-
-
-    sol.reverse()
-    return(sol)
+    return (camino)
 
 
 def breadthFirstSearch(problem):
@@ -151,41 +142,37 @@ def breadthFirstSearch(problem):
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    """Search the node that has the lowest combined cost and heuristic first."""
+    "*** YOUR CODE HERE ***"
     firstState = problem.getStartState()
-    print(firstState)
-    explored = {firstState}
+
+    explored = set()
     toEvaluate = PriorityQueue()
-    toEvaluate.push(firstState,1)
+    toEvaluate.push(firstState, 0)
     found = problem.isGoalState(firstState)
-    movements = {}
-    coste=0
+    movements = PriorityQueue()
+    coste = 0
+    camino = []
+
     while toEvaluate.isEmpty() == False and found == False:
-        if problem.getStartState()!=toEvaluate.heap[0][2]:
-            coste=toEvaluate.heap[0][0]
+        if problem.getStartState() != toEvaluate.heap[0][2]:
+            coste = toEvaluate.heap[0][0]
+            camino = movements.pop()
+
         node = toEvaluate.pop()
-        explored.add(node)
-        if problem.isGoalState(node):
-            found = True
-            goal = node
-        if not found:
-            sucessors = problem.getSuccessors(node)
-            for i in sucessors:
-                n = i[0]
-                if n not in explored and n not in movements:
-                    movements[n] = [i[1], node, i[2]]
-                    toEvaluate.push(n,coste+i[2])
-                elif n not in explored and n in movements and i[2]<=movements[n][2]:
-                    movements[n] = [i[1], node, i[2]]
+        if node not in explored:
+            explored.add(node)
+            if problem.isGoalState(node):
+                found = True
+            if not found:
+                sucessors = problem.getSuccessors(node)
+                for i in sucessors:
+                    n = i[0]
+                    if n not in explored:
+                        toEvaluate.push(n, coste + i[2] )
+                        movements.push(camino + [i[1]], coste + i[2])
 
-    sol = []
-    next = goal
-    while next != firstState:
-        m = movements.get(next)
-        sol.append(m[0])
-        next = m[1]
-
-    sol.reverse()
-    return (sol)
+    return (camino)
 
 def nullHeuristic(state, problem=None):
     """
@@ -227,7 +214,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                         toEvaluate.push(n, coste + i[2]+heuristic(n,problem))
                         movements.push(camino+[i[1]],coste + i[2]+ heuristic(n,problem))
 
-    print(camino)
     return (camino)
 
 
