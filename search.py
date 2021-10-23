@@ -124,40 +124,35 @@ def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
     firstState = problem.getStartState()
-    explored = {firstState}
+    explored = []
     toEvaluate = Queue()
     toEvaluate.push(firstState)
     found = problem.isGoalState(firstState)
-    movements = {}
+    movements = Queue()
+    camino=[]
+
     while toEvaluate.isEmpty() == False and found == False:
         node = toEvaluate.pop()
-        explored.add(node)
-        if problem.isGoalState(node):
-            found = True
-            goal = node
-        if not found:
-            sucessors = problem.getSuccessors(node)
-            for i in sucessors:
-                n = i[0]
-                if n not in explored and n not in movements.keys():
-                    movements[n] = [i[1], node]
-                    if n not in toEvaluate.list:
-                        toEvaluate.push(n)
+        if node not in explored:
+            explored.append(node)
+            if problem.isGoalState(node):
+                found = True
+            if not found:
+                sucessors = problem.getSuccessors(node)
+                for i in sucessors:
+                    n = i[0]
 
-    sol = []
-    next = goal
-    while next != firstState:
-        m = movements.get(next)
-        sol.append(m[0])
-        next = m[1]
+                    toEvaluate.push(n)
+                    movements.push(camino + [i[1]])
+        if found==False:camino = movements.pop()
 
-    sol.reverse()
-    return (sol)
+    return (camino)
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     firstState = problem.getStartState()
+    print(firstState)
     explored = {firstState}
     toEvaluate = PriorityQueue()
     toEvaluate.push(firstState,1)
