@@ -186,7 +186,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     "*** YOUR CODE HERE ***"
     firstState = problem.getStartState()
 
-    explored = set()
+    explored = []
     toEvaluate = PriorityQueue()
     toEvaluate.push(firstState, 0)
     found = problem.isGoalState(firstState)
@@ -203,7 +203,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
 
         node = toEvaluate.pop()
         if node not in explored:
-            explored.add(node)
+            explored.append(node)
             if problem.isGoalState(node):
                 found = True
             if not found:

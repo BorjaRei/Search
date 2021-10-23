@@ -10,7 +10,8 @@
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
+import numpy as np
+from numpy import sqrt
 
 """
 This file contains all of the agents that can be selected to control Pacman.  To
@@ -288,8 +289,6 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        print(startingGameState)
-        print(self.walls)
 
     def getStartState(self):
         """
@@ -318,7 +317,6 @@ class CornersProblem(search.SearchProblem):
             state, 'action' is the action required to get there, and 'stepCost'
             is the incremental cost of expanding to that successor
         """
-        print("SUCESORES")
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
@@ -373,40 +371,26 @@ def cornersHeuristic(state, problem):
     shortest path from the state to a goal of the problem; i.e.  it should be
     admissible (as well as consistent).
     """
-    corners = problem.corners # These are the corner coordinates
-    walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
+    corners = problem.corners
+    walls = problem.walls
 
-    "*** YOUR CODE HERE ***"
-    heuristic = 0
-    cornersLeft = state[1][:]
-    referencePoint = state[0]
+    "* YOUR CODE HERE *"
+    corners = state[1]
+    distances = []
+    for corner in corners:
+        distances.append(manhattanDistance(state[0], corner))
 
-    while len(cornersLeft) > 0:
-        closestCorner = closestPoint(referencePoint, cornersLeft)
-        heuristic += euclidieanDistance(referencePoint, closestCorner)
-        referencePoint = closestCorner
-        cornersLeft.pop(closestCorner)
-
-    return heuristic
-
-    return 0 # Default to trivial solution
+    resultado=None
+    if len(distances)==0:
+        resultado=0
+    else:
+        resultado=np.min(distances)
+    return resultado
 
 
-def closestPoint(fromPoint, candidatesList):
-    if len(candidatesList) == 0:
-        return None
 
-    closestCorner = candidatesList[0]
-    closestCost = euclidieanDistance(fromPoint, closestCorner)
-    for candidate in candidatesList[1:]:
-        thisCost = euclidieanDistance(fromPoint, candidate)
-        if closestCost > thisCost:
-            closestCost = thisCost
-            closestCorner = candidate
 
-    return closestCorner
-
-def euclidieanDistance (pointA, pointB):
+def manhattanDistance (pointA, pointB):
 	return abs(pointA[0] - pointB[0]) + abs(pointA[1] - pointB[1])
 
 class AStarCornersAgent(SearchAgent):
